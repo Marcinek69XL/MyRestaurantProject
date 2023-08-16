@@ -21,6 +21,14 @@ namespace MyRestaurantProject.Entities
             modelBuilder.Entity<Dish>()
                 .Property(x => x.Name)
                 .IsRequired();
+
+            modelBuilder.Entity<Address>()
+                .Property(x => x.City)
+                .HasMaxLength(50);
+
+            modelBuilder.Entity<Address>()
+                .Property(x => x.Street)
+                .HasMaxLength(50);
         }
 
         /* Jaki typ bazy danych, oraz jak ma wygladac polaczenie do bazy */
