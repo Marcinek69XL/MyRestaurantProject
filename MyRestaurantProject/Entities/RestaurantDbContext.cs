@@ -4,7 +4,7 @@ namespace MyRestaurantProject.Entities
 {
     public class RestaurantDbContext : DbContext
     {
-        private string _connectionString = "Data Source=localhost\\master,1433;User Id=your_username;Password=your_password;";
+        private string _connectionString = "Data Source=localhost\\master,1433;User Id=sa;Password=1qaz!QAZ;";
 
         public DbSet<Restaurant> Restaurants { get; set; }
         public DbSet<Address> Addresses { get; set; }
