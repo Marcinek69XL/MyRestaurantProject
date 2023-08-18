@@ -17,6 +17,15 @@ namespace MyRestaurantProject
                     x => x.MapFrom(x => x.Address.PostalCode));
 
             CreateMap<Dish, DishDto>();
+
+            CreateMap<CreateRestaurantDto, Restaurant>()
+                .ForMember(d => d.Address,
+                    x => x.MapFrom(dto => new Address()
+                    {
+                        City = dto.City,
+                        Street = dto.Street,
+                        PostalCode = dto.PostalCode
+                    }));
         }
     }
 }

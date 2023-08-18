@@ -39,7 +39,10 @@ namespace MyRestaurantProject.Controllers
         {
             var restaurant = _dbContext
                 .Restaurants
-                .FirstOrDefault(x => x.Id == id);
+                .Where(x => x.Id == id)
+                .Include(x => x.Address)
+                .Include(x => x.Dishes)
+                .FirstOrDefault();
 
             if (restaurant is null)
                 return NotFound();
@@ -47,6 +50,17 @@ namespace MyRestaurantProject.Controllers
             var restaurantDto = _mapper.Map<RestaurantDto>(restaurant);
 
             return Ok(restaurantDto);
+        }
+
+        [HttpPost]
+        public ActionResult CreateRestaurant([FromBody] CreateRestaurantDto createDto)
+        {
+            var restaurant = _mapper.Map<Restaurant>(createDto);
+            
+            _dbContext.Add(restaurant);
+            _dbContext.SaveChanges();
+
+            return Created($"api/Restaurant/{restaurant.Id}", null);
         }
     }
 }
