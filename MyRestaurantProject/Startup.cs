@@ -9,6 +9,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using MyRestaurantProject.Entities;
 
@@ -28,6 +29,7 @@ namespace MyRestaurantProject
         {
             services.AddScoped<IWeatherForecastService, WeatherForecastService>();
             services.AddDbContext<RestaurantDbContext>();
+            services.AddAutoMapper(Assembly.GetExecutingAssembly());
             services.AddScoped<RestaurantSeeder>();
 
             services.AddControllers();
