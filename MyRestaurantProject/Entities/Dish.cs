@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace MyRestaurantProject.Entities
+﻿namespace MyRestaurantProject.Entities
 {
     public class Dish
     {

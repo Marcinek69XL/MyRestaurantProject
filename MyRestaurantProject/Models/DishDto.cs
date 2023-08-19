@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace MyRestaurantProject.Models
+﻿namespace MyRestaurantProject.Models
 {
     public class DishDto
     {
