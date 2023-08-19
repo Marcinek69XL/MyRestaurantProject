@@ -1,53 +1,39 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using MyRestaurantProject.Entities;
 using MyRestaurantProject.Models;
+using MyRestaurantProject.Services;
 
 namespace MyRestaurantProject.Controllers
 {
     [Route("api/{controller}")]
     public class RestaurantController : ControllerBase
     {
-        private readonly RestaurantDbContext _dbContext;
+        private readonly IRestaurantService _restaurantService;
         private readonly IMapper _mapper;
 
-        public RestaurantController(RestaurantDbContext dbContext, IMapper mapper)
+        public RestaurantController(IRestaurantService restaurantService, IMapper mapper)
         {
-            _dbContext = dbContext;
+            _restaurantService = restaurantService;
             _mapper = mapper;
         }
 
         [HttpGet()]
         public ActionResult<IEnumerable<RestaurantDto>> GetAll()
         {
-            var restaurants =_dbContext
-                .Restaurants
-                .Include(x => x.Address)
-                .Include(x => x.Dishes)
-                .ToList();
-
-            var restaurantsDto = _mapper.Map<List<RestaurantDto>>(restaurants);
-
+            var restaurantsDto = _restaurantService.GetAll();
+            
             return Ok(restaurantsDto);
         }
 
         [HttpGet("{id}")]
         public ActionResult<Restaurant> Get([FromRoute]int id)
         {
-            var restaurant = _dbContext
-                .Restaurants
-                .Where(x => x.Id == id)
-                .Include(x => x.Address)
-                .Include(x => x.Dishes)
-                .FirstOrDefault();
+            var restaurantDto = _restaurantService.Get(id);
 
-            if (restaurant is null)
+            if (restaurantDto is null)
                 return NotFound();
-
-            var restaurantDto = _mapper.Map<RestaurantDto>(restaurant);
 
             return Ok(restaurantDto);
         }
@@ -58,13 +44,10 @@ namespace MyRestaurantProject.Controllers
             // sprawdzenie poprawnosci modelu
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
-            
-            var restaurant = _mapper.Map<Restaurant>(createDto);
-            
-            _dbContext.Add(restaurant);
-            _dbContext.SaveChanges();
 
-            return Created($"api/Restaurant/{restaurant.Id}", null);
+            var newId = _restaurantService.CreateRestaurant(createDto);
+
+            return Created($"api/Restaurant/{newId}", null);
         }
     }
 }

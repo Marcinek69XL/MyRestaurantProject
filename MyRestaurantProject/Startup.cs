@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System.Reflection;
 using MyRestaurantProject.Entities;
+using MyRestaurantProject.Services;
 
 namespace MyRestaurantProject
 {
@@ -22,6 +23,7 @@ namespace MyRestaurantProject
         {
             services.AddDbContext<RestaurantDbContext>();
             services.AddAutoMapper(Assembly.GetExecutingAssembly());
+            services.AddScoped<IRestaurantService, RestaurantService>();
             services.AddScoped<RestaurantSeeder>();
 
             services.AddControllers();
