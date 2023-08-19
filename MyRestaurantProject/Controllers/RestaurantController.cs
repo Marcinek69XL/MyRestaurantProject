@@ -55,6 +55,10 @@ namespace MyRestaurantProject.Controllers
         [HttpPost]
         public ActionResult CreateRestaurant([FromBody] CreateRestaurantDto createDto)
         {
+            // sprawdzenie poprawnosci modelu
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+            
             var restaurant = _mapper.Map<Restaurant>(createDto);
             
             _dbContext.Add(restaurant);
