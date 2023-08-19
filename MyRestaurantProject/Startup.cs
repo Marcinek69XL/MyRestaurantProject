@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System.Reflection;
 using MyRestaurantProject.Entities;
+using MyRestaurantProject.Middleware;
 using MyRestaurantProject.Services;
 
 namespace MyRestaurantProject
@@ -21,6 +22,7 @@ namespace MyRestaurantProject
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddScoped<ErrorHandlingMiddleware>();
             services.AddDbContext<RestaurantDbContext>();
             services.AddAutoMapper(Assembly.GetExecutingAssembly());
             services.AddScoped<IRestaurantService, RestaurantService>();
@@ -38,6 +40,7 @@ namespace MyRestaurantProject
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseMiddleware<ErrorHandlingMiddleware>();
             app.UseHttpsRedirection();
 
             app.UseRouting();
