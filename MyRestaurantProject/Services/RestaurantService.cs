@@ -12,6 +12,8 @@ namespace MyRestaurantProject.Services
         IEnumerable<RestaurantDto> GetAll();
         RestaurantDto Get(int id);
         int CreateRestaurant(CreateRestaurantDto createDto);
+        bool Delete(int id);
+        bool UpdateRestaurant(UpdateRestaurantDto updateDto, int id);
     }
 
     public class RestaurantService : IRestaurantService
@@ -58,6 +60,37 @@ namespace MyRestaurantProject.Services
             _dbContext.SaveChanges();
 
             return restaurant.Id;
+        }
+
+        public bool Delete(int id)
+        {
+            var restaurant = _dbContext
+                .Restaurants
+                .FirstOrDefault(x => x.Id == id);
+
+            if (restaurant is null)
+                return false;
+
+            _dbContext.Remove(restaurant);
+            _dbContext.SaveChanges();
+            return true;
+        }
+
+        public bool UpdateRestaurant(UpdateRestaurantDto updateDto, int id)
+        {
+            var restaurant = _dbContext
+                .Restaurants
+                .FirstOrDefault(x => x.Id == id);
+            
+            if (restaurant is null)
+                return false;
+
+            restaurant.Name = updateDto.Name;
+            restaurant.Description = updateDto.Description;
+            restaurant.HasDelivery = updateDto.HasDelivery;
+
+            _dbContext.SaveChanges();
+            return true;
         }
     }
 }

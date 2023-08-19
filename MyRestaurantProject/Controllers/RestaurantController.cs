@@ -39,7 +39,7 @@ namespace MyRestaurantProject.Controllers
         }
 
         [HttpPost]
-        public ActionResult CreateRestaurant([FromBody] CreateRestaurantDto createDto)
+        public ActionResult Post([FromBody] CreateRestaurantDto createDto)
         {
             // sprawdzenie poprawnosci modelu
             if (!ModelState.IsValid)
@@ -48,6 +48,31 @@ namespace MyRestaurantProject.Controllers
             var newId = _restaurantService.CreateRestaurant(createDto);
 
             return Created($"api/Restaurant/{newId}", null);
+        }
+        
+        [HttpDelete("{id}")]
+        public ActionResult Delete([FromRoute] int id)
+        {
+            var isRemoved = _restaurantService.Delete(id);
+
+            if (isRemoved)
+                return NoContent();
+            else
+                return NotFound();
+        }
+        
+        [HttpPut("{id}")]
+        public ActionResult Put([FromBody] UpdateRestaurantDto dto,[FromRoute] int id)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+            
+            var isRemoved = _restaurantService.UpdateRestaurant(dto, id);
+
+            if (isRemoved)
+                return Ok();
+            else
+                return NotFound();
         }
     }
 }
