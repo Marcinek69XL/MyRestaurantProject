@@ -1,7 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using MyRestaurantProject.Entities;
 using MyRestaurantProject.Models;
 
@@ -20,11 +22,13 @@ namespace MyRestaurantProject.Services
     {
         private readonly IMapper _mapper;
         private readonly RestaurantDbContext _dbContext;
+        private readonly ILogger<RestaurantService> _logger;
 
-        public RestaurantService(IMapper mapper, RestaurantDbContext dbContext)
+        public RestaurantService(IMapper mapper, RestaurantDbContext dbContext, ILogger<RestaurantService> logger)
         {
             _mapper = mapper;
             _dbContext = dbContext;
+            _logger = logger;
         }
         
         public IEnumerable<RestaurantDto> GetAll()
@@ -64,6 +68,8 @@ namespace MyRestaurantProject.Services
 
         public bool Delete(int id)
         {
+            _logger.LogError($"Restaurant with id: {id} DELETE action invoked");
+            
             var restaurant = _dbContext
                 .Restaurants
                 .FirstOrDefault(x => x.Id == id);
