@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using AutoMapper;
 using MyRestaurantProject.Entities;
 using MyRestaurantProject.Exceptions;
@@ -9,6 +10,8 @@ namespace MyRestaurantProject.Services
     public interface IDishService
     {
         int Create(int restaurantId, CreateDishDto createDishDto);
+        IEnumerable<DishDto> GetDishes(int restaurantId);
+        DishDto GetDish(int restaurantId, int dishId);
     }
 
     public class DishService : IDishService
@@ -34,6 +37,31 @@ namespace MyRestaurantProject.Services
             _dbContext.SaveChanges();
 
             return dish.Id;
+        }
+
+        public IEnumerable<DishDto> GetDishes(int restaurantId)
+        {
+            var dishes = _dbContext
+                .Dishes
+                .Where(d => d.RestaurantId == restaurantId);
+
+            if (dishes is null || !dishes.Any())
+                throw new NotFoundException("Dishes not found");
+            
+            var dto = _mapper.Map<IEnumerable<Dish>, IEnumerable<DishDto>>(dishes);
+            return dto;
+        }
+
+        public DishDto GetDish(int restaurantId, int dishId)
+        {
+            var dish = _dbContext.Dishes
+                .FirstOrDefault(x => x.Id == dishId);
+
+            if (dish is null || dish.RestaurantId != restaurantId)
+                throw new NotFoundException("Dish not found");
+            
+            var dto = _mapper.Map<Dish, DishDto>(dish);
+            return dto;
         }
     }
 }
