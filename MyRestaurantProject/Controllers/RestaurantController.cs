@@ -10,7 +10,7 @@ using MyRestaurantProject.Services;
 
 namespace MyRestaurantProject.Controllers
 {
-    [Route("api/{controller}")]
+    [Route("api/[controller]")]
     [ApiController] // Dzieki temu mozna sie pozbyc walidacji // sprawdzenie poprawnosci modelu !ModelState.IsValid...
     public class RestaurantController : ControllerBase
     {

@@ -22,12 +22,13 @@ namespace MyRestaurantProject
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddScoped<ErrorHandlingMiddleware>();
             services.AddDbContext<RestaurantDbContext>();
             services.AddAutoMapper(Assembly.GetExecutingAssembly());
             services.AddScoped<IRestaurantService, RestaurantService>();
             services.AddScoped<RestaurantSeeder>();
-
+            services.AddScoped<ErrorHandlingMiddleware>();
+            services.AddSwaggerGen();
+            
             services.AddControllers();
         }
 
@@ -43,6 +44,12 @@ namespace MyRestaurantProject
             app.UseMiddleware<ErrorHandlingMiddleware>();
             app.UseHttpsRedirection();
 
+            app.UseSwagger();
+            app.UseSwaggerUI(x =>
+            {
+                x.SwaggerEndpoint("/swagger/v1/swagger.json", "RestaurantApi");
+            });
+            
             app.UseRouting();
 
             //app.UseAuthorization();
