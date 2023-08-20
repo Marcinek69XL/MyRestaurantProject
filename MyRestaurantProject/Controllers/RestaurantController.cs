@@ -15,12 +15,10 @@ namespace MyRestaurantProject.Controllers
     public class RestaurantController : ControllerBase
     {
         private readonly IRestaurantService _restaurantService;
-        private readonly IMapper _mapper;
 
-        public RestaurantController(IRestaurantService restaurantService, IMapper mapper)
+        public RestaurantController(IRestaurantService restaurantService)
         {
             _restaurantService = restaurantService;
-            _mapper = mapper;
         }
 
         [HttpGet()]

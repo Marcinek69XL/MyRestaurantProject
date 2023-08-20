@@ -27,6 +27,7 @@ namespace MyRestaurantProject
             services.AddScoped<IRestaurantService, RestaurantService>();
             services.AddScoped<RestaurantSeeder>();
             services.AddScoped<ErrorHandlingMiddleware>();
+            services.AddScoped<RequestTimeMiddleware>();
             services.AddSwaggerGen();
             
             services.AddControllers();
@@ -42,6 +43,8 @@ namespace MyRestaurantProject
             }
 
             app.UseMiddleware<ErrorHandlingMiddleware>();
+            app.UseMiddleware<RequestTimeMiddleware>();
+            
             app.UseHttpsRedirection();
 
             app.UseSwagger();
