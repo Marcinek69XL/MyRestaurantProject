@@ -1,14 +1,17 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using MyRestaurantProject.Entities;
+using MyRestaurantProject.Exceptions;
 using MyRestaurantProject.Models;
 using MyRestaurantProject.Services;
 
 namespace MyRestaurantProject.Controllers
 {
     [Route("api/{controller}")]
+    [ApiController] // Dzieki temu mozna sie pozbyc walidacji // sprawdzenie poprawnosci modelu !ModelState.IsValid...
     public class RestaurantController : ControllerBase
     {
         private readonly IRestaurantService _restaurantService;
@@ -32,20 +35,13 @@ namespace MyRestaurantProject.Controllers
         public ActionResult<Restaurant> Get([FromRoute]int id)
         {
             var restaurantDto = _restaurantService.Get(id);
-
-            if (restaurantDto is null)
-                return NotFound();
-
+            
             return Ok(restaurantDto);
         }
 
         [HttpPost]
         public ActionResult Post([FromBody] CreateRestaurantDto createDto)
         {
-            // sprawdzenie poprawnosci modelu
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
             var newId = _restaurantService.CreateRestaurant(createDto);
 
             return Created($"api/Restaurant/{newId}", null);
@@ -54,26 +50,17 @@ namespace MyRestaurantProject.Controllers
         [HttpDelete("{id}")]
         public ActionResult Delete([FromRoute] int id)
         {
-            var isRemoved = _restaurantService.Delete(id);
-
-            if (isRemoved)
-                return NoContent();
-            else
-                return NotFound();
+            _restaurantService.Delete(id);
+         
+            return NoContent(); // 204
         }
         
         [HttpPut("{id}")]
         public ActionResult Put([FromBody] UpdateRestaurantDto dto,[FromRoute] int id)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+            _restaurantService.UpdateRestaurant(dto, id);
             
-            var isRemoved = _restaurantService.UpdateRestaurant(dto, id);
-
-            if (isRemoved)
-                return Ok();
-            else
-                return NotFound();
+            return Ok();
         }
     }
 }

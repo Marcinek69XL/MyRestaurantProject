@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
+using MyRestaurantProject.Exceptions;
 
 namespace MyRestaurantProject.Middleware
 {
@@ -17,10 +18,15 @@ namespace MyRestaurantProject.Middleware
         {
             try
             {
-                 /* Kontynuacja dalszego przeplywu zadania http,
-                 dla przykladu gdybym wykomentowal to na moim Middleware przeplyw zapytania
-                 sie zatrzyma, i np zapytanie GET (i każde inne) sie nie wykona. */
+                /* Kontynuacja dalszego przeplywu zadania http,
+                dla przykladu gdybym wykomentowal to na moim Middleware przeplyw zapytania
+                sie zatrzyma, i np zapytanie GET (i każde inne) sie nie wykona. */
                 await next.Invoke(context);
+            }
+            catch (NotFoundException notFoundException)
+            {
+                context.Response.StatusCode = StatusCodes.Status404NotFound;
+                await context.Response.WriteAsync(notFoundException.Message);
             }
             catch (Exception e)
             {
