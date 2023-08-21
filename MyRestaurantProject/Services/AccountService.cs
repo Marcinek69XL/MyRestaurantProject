@@ -27,12 +27,6 @@ namespace MyRestaurantProject.Services
         
         public int RegisterUser(RegisterUserDto dto)
         {
-            var user = _db.Users
-                .FirstOrDefault(u => u.Email == dto.Email);
-
-            if (user != null)
-                throw new NotFoundException($"Email '{user.Email}' is used");
-            
             var newUser = _mapper.Map<RegisterUserDto, User>(dto);
             newUser.PasswordHash = _hasher.HashPassword(newUser, dto.Password);
 
