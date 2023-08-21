@@ -9,6 +9,9 @@ namespace MyRestaurantProject.Entities
         public DbSet<Restaurant> Restaurants { get; set; }
         public DbSet<Address> Addresses { get; set; }
         public DbSet<Dish> Dishes { get; set; }
+        public DbSet<User> Users { get; set; }
+        public DbSet<Role> Roles { get; set; }
+        
 
         /* Nadajemy dodatkowa konfiguracje */
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -31,6 +34,20 @@ namespace MyRestaurantProject.Entities
                 .Property(x => x.Street)
                 .IsRequired()
                 .HasMaxLength(50);
+
+            modelBuilder.Entity<User>()
+                .Property(x => x.Email)
+                .IsRequired();
+            modelBuilder.Entity<User>()
+                .Property(x => x.RoleId)
+                .IsRequired();
+            modelBuilder.Entity<User>()
+                .Property(x => x.PasswordHash)
+                .IsRequired();
+
+            modelBuilder.Entity<Role>()
+                .Property(x => x.Name)
+                .IsRequired();
         }
 
         /* Jaki typ bazy danych, oraz jak ma wygladac polaczenie do bazy */
