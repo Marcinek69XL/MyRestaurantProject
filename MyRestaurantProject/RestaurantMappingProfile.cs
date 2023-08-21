@@ -28,6 +28,7 @@ namespace MyRestaurantProject
                     }));
             
             CreateMap<CreateDishDto,Dish>();
+            CreateMap<RegisterUserDto, User>();
         }
     }
 }

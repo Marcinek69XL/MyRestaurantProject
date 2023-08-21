@@ -4,6 +4,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System.Reflection;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore.Internal;
 using MyRestaurantProject.Entities;
 using MyRestaurantProject.Middleware;
 using MyRestaurantProject.Services;
@@ -26,6 +28,8 @@ namespace MyRestaurantProject
             services.AddAutoMapper(Assembly.GetExecutingAssembly());
             services.AddScoped<IRestaurantService, RestaurantService>();
             services.AddScoped<IDishService, DishService>();
+            services.AddScoped<IAccountService, AccountService>();
+            services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
             services.AddScoped<RestaurantSeeder>();
             services.AddScoped<ErrorHandlingMiddleware>();
             services.AddScoped<RequestTimeMiddleware>();
