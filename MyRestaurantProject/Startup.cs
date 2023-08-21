@@ -4,15 +4,19 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System.Reflection;
+using System.Text;
+using System.Text.Unicode;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore.Internal;
+using Microsoft.IdentityModel.Tokens;
 using MyRestaurantProject.Entities;
 using MyRestaurantProject.Middleware;
 using MyRestaurantProject.Models;
 using MyRestaurantProject.Models.Validators;
 using MyRestaurantProject.Services;
+using MyRestaurantProject.Settings;
 
 namespace MyRestaurantProject
 {
@@ -28,6 +32,25 @@ namespace MyRestaurantProject
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            var authSettings = new AuthenticationSettings();
+            Configuration.GetSection("Authentication").Bind(authSettings);
+            services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = "Bearer";
+                options.DefaultScheme = "Bearer";
+                options.DefaultChallengeScheme = "Bearer";
+            }).AddJwtBearer(ctg =>
+            {
+                ctg.RequireHttpsMetadata = false;
+                ctg.SaveToken = true;
+                ctg.TokenValidationParameters = new TokenValidationParameters()
+                {
+                    ValidIssuer = authSettings.JwtIssuer, // kto generuje token, no nasza apka
+                    ValidAudience = authSettings.JwtIssuer, // kto uzywa token, tez nasza apka
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(authSettings.JwtKey))
+                };
+            });
+            
             services.AddDbContext<RestaurantDbContext>();
             services.AddAutoMapper(Assembly.GetExecutingAssembly());
             services.AddScoped<IRestaurantService, RestaurantService>();
@@ -55,7 +78,7 @@ namespace MyRestaurantProject
 
             app.UseMiddleware<ErrorHandlingMiddleware>();
             app.UseMiddleware<RequestTimeMiddleware>();
-            
+            app.UseAuthentication();
             app.UseHttpsRedirection();
 
             app.UseSwagger();
