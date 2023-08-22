@@ -34,6 +34,9 @@ namespace MyRestaurantProject
         {
             var authSettings = new AuthenticationSettings();
             Configuration.GetSection("Authentication").Bind(authSettings);
+
+            services.AddSingleton(authSettings);
+            
             services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = "Bearer";

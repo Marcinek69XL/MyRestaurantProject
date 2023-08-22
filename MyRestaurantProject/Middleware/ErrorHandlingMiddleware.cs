@@ -23,6 +23,11 @@ namespace MyRestaurantProject.Middleware
                 sie zatrzyma, i np zapytanie GET (i każde inne) sie nie wykona. */
                 await next.Invoke(context);
             }
+            catch (BadRequestException badRequestException)
+            {
+                context.Response.StatusCode = StatusCodes.Status400BadRequest;
+                await context.Response.WriteAsync(badRequestException.Message);
+            }
             catch (NotFoundException notFoundException)
             {
                 context.Response.StatusCode = StatusCodes.Status404NotFound;
