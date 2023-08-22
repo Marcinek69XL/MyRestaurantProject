@@ -53,6 +53,16 @@ namespace MyRestaurantProject
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(authSettings.JwtKey))
                 };
             });
+
+            services.AddAuthorization(options =>
+            {
+                // mozna dodac np posiadanie samego claima jak nizej
+                // options.AddPolicy("HasNationality", builder => builder.RequireClaim("Nationality"));
+                
+                // lub posiadanie claima jak i wartosc claima
+                options.AddPolicy("HasNationality", builder => 
+                    builder.RequireClaim("Nationality","German","Polish"));
+            });
             
             services.AddDbContext<RestaurantDbContext>();
             services.AddAutoMapper(Assembly.GetExecutingAssembly());

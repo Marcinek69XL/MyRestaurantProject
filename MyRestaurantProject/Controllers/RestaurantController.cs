@@ -25,6 +25,7 @@ namespace MyRestaurantProject.Controllers
 
         [HttpGet]
 //        [Authorize] - mozna na poziomie metody
+        [Authorize(Policy = "HasNationality")] // jesli nie spelnia, 403 Forbidden
         public ActionResult<IEnumerable<RestaurantDto>> GetAll()
         {
             var restaurantsDto = _restaurantService.GetAll();

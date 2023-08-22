@@ -68,9 +68,11 @@ namespace MyRestaurantProject.Services
                 new Claim(ClaimTypes.NameIdentifier, userInDb.Id.ToString()),
                 new Claim(ClaimTypes.Name, $"{userInDb.FirstName} {userInDb.LastName}"),
                 new Claim(ClaimTypes.Role, userInDb.Role.Name),
-                new Claim("DateOfBirth", userInDb.BirthDate.Value.ToString("d")),
-                new Claim("Nationality", userInDb.Nationality)
+                new Claim("DateOfBirth", userInDb.BirthDate.Value.ToString("d"))
             };
+
+            if (!string.IsNullOrEmpty(userInDb.Nationality))
+                claims.Add(new Claim("Nationality", userInDb.Nationality));
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_authSettings.JwtKey));
             var cred = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
