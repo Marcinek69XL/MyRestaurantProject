@@ -42,7 +42,8 @@ namespace MyRestaurantProject.Controllers
         }
 
         [HttpPost]
-        public ActionResult Post([FromBody] CreateRestaurantDto createDto)
+        [Authorize(Roles = "Admin,Manager")] // gdy nie mamy danej roli, rzuca 403 Forbidden
+        public ActionResult CreateRestaurant([FromBody] CreateRestaurantDto createDto)
         {
             var newId = _restaurantService.CreateRestaurant(createDto);
 
