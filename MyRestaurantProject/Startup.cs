@@ -91,9 +91,7 @@ namespace MyRestaurantProject
             });
             
             app.UseRouting();
-
-            //app.UseAuthorization();
-
+            app.UseAuthorization(); // pomiedzy UseRouting a UserEndPoints musi byc
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();

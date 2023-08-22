@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using MyRestaurantProject.Entities;
@@ -12,6 +13,7 @@ namespace MyRestaurantProject.Controllers
 {
     [Route("api/[controller]")]
     [ApiController] // Dzieki temu mozna sie pozbyc walidacji // sprawdzenie poprawnosci modelu !ModelState.IsValid...
+    [Authorize]
     public class RestaurantController : ControllerBase
     {
         private readonly IRestaurantService _restaurantService;
@@ -21,15 +23,17 @@ namespace MyRestaurantProject.Controllers
             _restaurantService = restaurantService;
         }
 
-        [HttpGet()]
+        [HttpGet]
+//        [Authorize] - mozna na poziomie metody
         public ActionResult<IEnumerable<RestaurantDto>> GetAll()
         {
             var restaurantsDto = _restaurantService.GetAll();
             
             return Ok(restaurantsDto);
         }
-
+        
         [HttpGet("{id}")]
+        [AllowAnonymous] // - wylacza autoryzacje
         public ActionResult<Restaurant> Get([FromRoute]int id)
         {
             var restaurantDto = _restaurantService.Get(id);
