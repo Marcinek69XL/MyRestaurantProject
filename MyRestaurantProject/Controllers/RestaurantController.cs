@@ -34,7 +34,8 @@ namespace MyRestaurantProject.Controllers
         }
         
         [HttpGet("{id}")]
-        [AllowAnonymous] // - wylacza autoryzacje
+        // [AllowAnonymous] // - wylacza autoryzacje
+        [Authorize(Policy = "Atleast20")]
         public ActionResult<Restaurant> Get([FromRoute]int id)
         {
             var restaurantDto = _restaurantService.Get(id);

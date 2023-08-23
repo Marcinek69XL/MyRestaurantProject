@@ -8,9 +8,11 @@ using System.Text;
 using System.Text.Unicode;
 using FluentValidation;
 using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.IdentityModel.Tokens;
+using MyRestaurantProject.Authorization;
 using MyRestaurantProject.Entities;
 using MyRestaurantProject.Middleware;
 using MyRestaurantProject.Models;
@@ -62,8 +64,12 @@ namespace MyRestaurantProject
                 // lub posiadanie claima jak i wartosc claima
                 options.AddPolicy("HasNationality", builder => 
                     builder.RequireClaim("Nationality","German","Polish"));
+                
+                // customowa polityka autoryzacji
+                options.AddPolicy("Atleast20", builder => builder.AddRequirements(new MinimumAgeRequirement(20)));
             });
-            
+
+            services.AddScoped<IAuthorizationHandler, MinimumAgeHandler>();
             services.AddDbContext<RestaurantDbContext>();
             services.AddAutoMapper(Assembly.GetExecutingAssembly());
             services.AddScoped<IRestaurantService, RestaurantService>();
