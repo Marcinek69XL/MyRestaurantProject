@@ -13,9 +13,11 @@ namespace MyRestaurantProject.Entities
         public string ContactNumber { get; set; }
 
         public int AddressId { get; set; }
+        public int? CreatedById { get; set; }
         
         /* Virtual daje to że umożliwia Lazy Loading */
         public virtual Address Address { get; set; }
+        public virtual User CreatedBy { get; set; }
         public virtual List<Dish> Dishes {get; set; }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Security.Claims;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -47,7 +48,8 @@ namespace MyRestaurantProject.Controllers
         [Authorize(Roles = "Admin,Manager")] // gdy nie mamy danej roli, rzuca 403 Forbidden
         public ActionResult CreateRestaurant([FromBody] CreateRestaurantDto createDto)
         {
-            var newId = _restaurantService.CreateRestaurant(createDto);
+            var userId = int.Parse(User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier).Value);
+            var newId = _restaurantService.CreateRestaurant(createDto, userId);
 
             return Created($"api/Restaurant/{newId}", null);
         }
@@ -55,7 +57,7 @@ namespace MyRestaurantProject.Controllers
         [HttpDelete("{id}")]
         public ActionResult Delete([FromRoute] int id)
         {
-            _restaurantService.Delete(id);
+            _restaurantService.Delete(id, User);
          
             return NoContent(); // 204
         }
@@ -63,7 +65,7 @@ namespace MyRestaurantProject.Controllers
         [HttpPut("{id}")]
         public ActionResult Put([FromBody] UpdateRestaurantDto dto,[FromRoute] int id)
         {
-            _restaurantService.UpdateRestaurant(dto, id);
+            _restaurantService.UpdateRestaurant(dto, id, User);
             
             return Ok();
         }
