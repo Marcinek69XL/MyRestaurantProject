@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using MyRestaurantProject.Entities;
 
@@ -33,49 +34,34 @@ namespace MyRestaurantProject
 
         private IEnumerable<Restaurant> GetRestaurants()
         {
-            var restaurants = new List<Restaurant>
+            var restaurants = new List<Restaurant>();
+            var random = new Random();
+
+            for (int i = 1; i <= 5000; i++)
             {
-                new Restaurant
+                var restaurant = new Restaurant
                 {
-                    Name = "Restaurant A",
-                    Description = "Delicious food in a cozy ambiance.",
-                    Category = "Italian",
-                    HasDelivery = true,
-                    ContactEmail = "restaurantA@example.com",
-                    ContactNumber = "123-456-7890",
+                    Name = "Restaurant " + i,
+                    Description = "Description for Restaurant " + i,
+                    Category = random.Next(2) == 0 ? "Italian" : "Asian", // Losowo wybieramy kategorię
+                    HasDelivery = random.Next(2) == 0,
+                    ContactEmail = "restaurant" + i + "@example.com",
+                    ContactNumber = random.Next(100, 1000) + "-" + random.Next(100, 1000) + "-" + random.Next(1000, 10000),
                     Address = new Address
                     {
-                        City = "City A",
-                        Street = "Street A",
-                        PostalCode = "12345"
+                        City = "City " + (random.Next(2) == 0 ? "A" : "B"), // Losowo wybieramy miasto
+                        Street = "Street " + (random.Next(2) == 0 ? "X" : "Y"), // Losowo wybieramy ulicę
+                        PostalCode = random.Next(10000, 99999).ToString()
                     },
                     Dishes = new List<Dish>
                     {
-                        new Dish { Name = "Pasta Carbonara", Description = "Creamy pasta with bacon and cheese.", Price = 12.99M },
-                        new Dish { Name = "Margherita Pizza", Description = "Classic tomato and mozzarella pizza.", Price = 10.49M }
+                        new Dish { Name = "Dish 1", Description = "Description for Dish 1", Price = (decimal) (random.Next(5, 20) + random.NextDouble()) },
+                        new Dish { Name = "Dish 2", Description = "Description for Dish 2", Price = (decimal) (random.Next(5, 20) + random.NextDouble()) }
                     }
-                },
-                new Restaurant
-                {
-                    Name = "Restaurant B",
-                    Description = "Authentic Asian cuisine.",
-                    Category = "Asian",
-                    HasDelivery = true,
-                    ContactEmail = "restaurantB@example.com",
-                    ContactNumber = "987-654-3210",
-                    Address = new Address
-                    {
-                        City = "City B",
-                        Street = "Street B",
-                        PostalCode = "54321"
-                    },
-                    Dishes = new List<Dish>
-                    {
-                        new Dish { Name = "Pad Thai", Description = "Stir-fried noodles with shrimp and peanuts.", Price = 11.49M },
-                        new Dish { Name = "Sushi Platter", Description = "Assortment of fresh sushi rolls.", Price = 15.99M }
-                    }
-                }
-            };
+                };
+
+                restaurants.Add(restaurant);
+            }
 
             return restaurants;
         }

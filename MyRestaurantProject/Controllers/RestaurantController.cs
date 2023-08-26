@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
 using System.Security.Claims;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
@@ -27,10 +29,10 @@ namespace MyRestaurantProject.Controllers
         [HttpGet]
 //        [Authorize] - mozna na poziomie metody
 //        [Authorize(Policy = "HasNationality")] // jesli nie spelnia, 403 Forbidden
-        [Authorize(Policy = "Atleast2RestaurantCreated")]
-        public ActionResult<IEnumerable<RestaurantDto>> GetAll()
+//        [Authorize(Policy = "Atleast2RestaurantCreated")]
+        public ActionResult<IEnumerable<RestaurantDto>> GetAll([FromQuery] string searchPhrase)
         {
-            var restaurantsDto = _restaurantService.GetAll();
+            var restaurantsDto = _restaurantService.GetAll(searchPhrase);
             
             return Ok(restaurantsDto);
         }
