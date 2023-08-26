@@ -81,6 +81,7 @@ namespace MyRestaurantProject
             services.AddScoped<RestaurantSeeder>();
             services.AddScoped<ErrorHandlingMiddleware>();
             services.AddScoped<RequestTimeMiddleware>();
+            services.AddScoped<IUserContextService, UserContextService>();
             services.AddSwaggerGen();
 
             services.AddFluentValidationAutoValidation().AddFluentValidationClientsideAdapters();

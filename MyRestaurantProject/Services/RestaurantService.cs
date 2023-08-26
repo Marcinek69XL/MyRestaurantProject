@@ -17,9 +17,9 @@ namespace MyRestaurantProject.Services
     {
         IEnumerable<RestaurantDto> GetAll();
         RestaurantDto Get(int id);
-        int CreateRestaurant(CreateRestaurantDto createDto, int userId);
-        void Delete(int id, ClaimsPrincipal user);
-        void UpdateRestaurant(UpdateRestaurantDto updateDto, int id, ClaimsPrincipal user);
+        int CreateRestaurant(CreateRestaurantDto createDto);
+        void Delete(int id);
+        void UpdateRestaurant(UpdateRestaurantDto updateDto, int id);
     }
 
     public class RestaurantService : IRestaurantService
@@ -28,16 +28,19 @@ namespace MyRestaurantProject.Services
         private readonly RestaurantDbContext _dbContext;
         private readonly IAuthorizationService _authorizationService;
         private readonly ILogger<RestaurantService> _logger;
+        private readonly IUserContextService _userContext;
 
         public RestaurantService(IMapper mapper,
             RestaurantDbContext dbContext,
             IAuthorizationService authorizationService,
-            ILogger<RestaurantService> logger)
+            ILogger<RestaurantService> logger,
+            IUserContextService userContext)
         {
             _mapper = mapper;
             _dbContext = dbContext;
             _authorizationService = authorizationService;
             _logger = logger;
+            _userContext = userContext;
         }
         
         public IEnumerable<RestaurantDto> GetAll()
@@ -66,8 +69,10 @@ namespace MyRestaurantProject.Services
             return restaurantDto;
         }
 
-        public int CreateRestaurant(CreateRestaurantDto createDto, int userId)
+        public int CreateRestaurant(CreateRestaurantDto createDto)
         {
+            var userId = _userContext.GetUserId;
+            
             var restaurant = _mapper.Map<Restaurant>(createDto);
             restaurant.CreatedById = userId;
             _dbContext.Add(restaurant);
@@ -76,7 +81,7 @@ namespace MyRestaurantProject.Services
             return restaurant.Id;
         }
 
-        public void Delete(int id, ClaimsPrincipal user)
+        public void Delete(int id)
         {
             _logger.LogError($"Restaurant with id: {id} DELETE action invoked");
             
@@ -87,6 +92,8 @@ namespace MyRestaurantProject.Services
             if (restaurant is null)
                 throw new NotFoundException("Restaurant not found");
 
+            var user = _userContext.User;
+            
             var authResult = _authorizationService
                 .AuthorizeAsync(user, restaurant, new ResourceOperationRequirement(ResourceOperation.Delete)).Result;
 
@@ -99,7 +106,7 @@ namespace MyRestaurantProject.Services
             _dbContext.SaveChanges();
         }
 
-        public void UpdateRestaurant(UpdateRestaurantDto updateDto, int id, ClaimsPrincipal user)
+        public void UpdateRestaurant(UpdateRestaurantDto updateDto, int id)
         {
             var restaurant = _dbContext
                 .Restaurants
@@ -108,6 +115,8 @@ namespace MyRestaurantProject.Services
             if (restaurant is null)
                 throw new NotFoundException("Restaurant not found");
 
+            var user = _userContext.User; 
+            
             var authResult = _authorizationService.AuthorizeAsync(user, restaurant,
                 new ResourceOperationRequirement(ResourceOperation.Update)).Result;
 

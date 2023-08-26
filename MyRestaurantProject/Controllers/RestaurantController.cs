@@ -48,8 +48,7 @@ namespace MyRestaurantProject.Controllers
         [Authorize(Roles = "Admin,Manager")] // gdy nie mamy danej roli, rzuca 403 Forbidden
         public ActionResult CreateRestaurant([FromBody] CreateRestaurantDto createDto)
         {
-            var userId = int.Parse(User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier).Value);
-            var newId = _restaurantService.CreateRestaurant(createDto, userId);
+            var newId = _restaurantService.CreateRestaurant(createDto);
 
             return Created($"api/Restaurant/{newId}", null);
         }
@@ -57,7 +56,7 @@ namespace MyRestaurantProject.Controllers
         [HttpDelete("{id}")]
         public ActionResult Delete([FromRoute] int id)
         {
-            _restaurantService.Delete(id, User);
+            _restaurantService.Delete(id);
          
             return NoContent(); // 204
         }
@@ -65,7 +64,7 @@ namespace MyRestaurantProject.Controllers
         [HttpPut("{id}")]
         public ActionResult Put([FromBody] UpdateRestaurantDto dto,[FromRoute] int id)
         {
-            _restaurantService.UpdateRestaurant(dto, id, User);
+            _restaurantService.UpdateRestaurant(dto, id);
             
             return Ok();
         }
