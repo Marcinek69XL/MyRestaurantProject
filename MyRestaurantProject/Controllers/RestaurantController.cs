@@ -14,7 +14,7 @@ namespace MyRestaurantProject.Controllers
 {
     [Route("api/[controller]")]
     [ApiController] // Dzieki temu mozna sie pozbyc walidacji // sprawdzenie poprawnosci modelu !ModelState.IsValid...
-    [Authorize]
+  //  [Authorize]
     public class RestaurantController : ControllerBase
     {
         private readonly IRestaurantService _restaurantService;
@@ -26,7 +26,8 @@ namespace MyRestaurantProject.Controllers
 
         [HttpGet]
 //        [Authorize] - mozna na poziomie metody
-        [Authorize(Policy = "HasNationality")] // jesli nie spelnia, 403 Forbidden
+//        [Authorize(Policy = "HasNationality")] // jesli nie spelnia, 403 Forbidden
+        [Authorize(Policy = "Atleast2RestaurantCreated")]
         public ActionResult<IEnumerable<RestaurantDto>> GetAll()
         {
             var restaurantsDto = _restaurantService.GetAll();

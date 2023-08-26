@@ -67,10 +67,14 @@ namespace MyRestaurantProject
                 
                 // customowa polityka autoryzacji
                 options.AddPolicy("Atleast20", builder => builder.AddRequirements(new MinimumAgeRequirement(20)));
+                
+                options.AddPolicy("Atleast2RestaurantCreated", 
+                    builder => builder.AddRequirements(new MinimumRestaurantCreatedRequirement(2)));
             });
 
             services.AddScoped<IAuthorizationHandler, MinimumAgeHandler>();
             services.AddScoped<IAuthorizationHandler, ResourceOperationRequirementHandler>();
+            services.AddScoped<IAuthorizationHandler, MinimumRestaurantCreatedHandler>();
             services.AddDbContext<RestaurantDbContext>();
             services.AddAutoMapper(Assembly.GetExecutingAssembly());
             services.AddScoped<IRestaurantService, RestaurantService>();

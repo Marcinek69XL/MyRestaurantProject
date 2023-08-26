@@ -6,6 +6,8 @@ using MyRestaurantProject.Entities;
 
 namespace MyRestaurantProject.Authorization
 {
+    // Z drugim paramertu w AuthorizationHandler <..., tu>, czyli uzywam w serwisach po przez wstrzykniecie
+    // IAuthorizationService i skorzystanie z _authorizationService.AuthorizeAsync(...)
     public class ResourceOperationRequirementHandler : AuthorizationHandler<ResourceOperationRequirement, Restaurant>
     {
         protected override Task HandleRequirementAsync(
