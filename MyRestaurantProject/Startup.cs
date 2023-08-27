@@ -90,6 +90,16 @@ namespace MyRestaurantProject
             services.AddScoped<IUserContextService, UserContextService>();
             services.AddSwaggerGen();
 
+            services.AddCors(options =>
+            {
+                options.AddPolicy("FrontEndClient", builder =>
+                {
+                    builder.AllowAnyMethod()
+                        .AllowAnyHeader()
+                        .WithOrigins(Configuration["AllowedOrigins"]); //adres apki frontendowej, w configu zapisane
+                });
+            });
+
             services.AddFluentValidationAutoValidation().AddFluentValidationClientsideAdapters();
             services.AddControllers().AddJsonOptions(options => //Enumy jako string w swagerze
                 options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
