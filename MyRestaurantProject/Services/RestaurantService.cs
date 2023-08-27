@@ -15,7 +15,7 @@ namespace MyRestaurantProject.Services
 {
     public interface IRestaurantService
     {
-        IEnumerable<RestaurantDto> GetAll(string searchPhrase);
+        PagedResult<RestaurantDto> GetAll(RestaurantQuery queryParams);
         RestaurantDto Get(int id);
         int CreateRestaurant(CreateRestaurantDto createDto);
         void Delete(int id);
@@ -43,21 +43,32 @@ namespace MyRestaurantProject.Services
             _userContext = userContext;
         }
         
-        public IEnumerable<RestaurantDto> GetAll(string searchPhrase)
+        public PagedResult<RestaurantDto> GetAll(RestaurantQuery queryParams)
         {
-            var searchPhraseToLower = searchPhrase?.ToLower();
-            
-            var restaurants =_dbContext
+            var searchPhraseToLower = queryParams.SearchPhrase?.ToLower();
+
+            var baseQuery = _dbContext
                 .Restaurants
                 .Include(x => x.Address)
                 .Include(x => x.Dishes)
                 .Where(r => searchPhraseToLower == null ||
-                            (r.Name.ToLower().Contains(searchPhraseToLower) 
-                             || r.Description.ToLower().Contains(searchPhraseToLower)))
+                            (r.Name.ToLower().Contains(searchPhraseToLower)
+                             || r.Description.ToLower().Contains(searchPhraseToLower)));
+            
+            var restaurants = baseQuery
+                .Skip(queryParams.PageNumber * queryParams.PageSize)
+                .Take(queryParams.PageSize)
                 .ToList();
-
+            
             var restaurantsDto = _mapper.Map<List<RestaurantDto>>(restaurants);
-            return restaurantsDto;
+
+            var result = new PagedResult<RestaurantDto>(
+                items: restaurantsDto.ToList(),
+                totalItems: baseQuery.Count(),
+                pageSize: queryParams.PageSize,
+                pageNumber: queryParams.PageNumber);
+            
+            return result;
         }
         
         public RestaurantDto Get(int id)
@@ -68,7 +79,6 @@ namespace MyRestaurantProject.Services
                 .Include(x => x.Address)
                 .Include(x => x.Dishes)
                 .FirstOrDefault();
-
             
             var restaurantDto = _mapper.Map<RestaurantDto>(restaurant);
             return restaurantDto;

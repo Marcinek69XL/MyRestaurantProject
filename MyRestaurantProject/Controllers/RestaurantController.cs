@@ -30,9 +30,9 @@ namespace MyRestaurantProject.Controllers
 //        [Authorize] - mozna na poziomie metody
 //        [Authorize(Policy = "HasNationality")] // jesli nie spelnia, 403 Forbidden
 //        [Authorize(Policy = "Atleast2RestaurantCreated")]
-        public ActionResult<IEnumerable<RestaurantDto>> GetAll([FromQuery] string searchPhrase)
+        public ActionResult<PagedResult<RestaurantDto>> GetAll([FromQuery, Required] RestaurantQuery restaurantQuery)
         {
-            var restaurantsDto = _restaurantService.GetAll(searchPhrase);
+            var restaurantsDto = _restaurantService.GetAll(restaurantQuery);
             
             return Ok(restaurantsDto);
         }
