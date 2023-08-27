@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System.Reflection;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Text.Unicode;
 using FluentValidation;
 using FluentValidation.AspNetCore;
@@ -90,7 +91,8 @@ namespace MyRestaurantProject
             services.AddSwaggerGen();
 
             services.AddFluentValidationAutoValidation().AddFluentValidationClientsideAdapters();
-            services.AddControllers();
+            services.AddControllers().AddJsonOptions(options => //Enumy jako string w swagerze
+                options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

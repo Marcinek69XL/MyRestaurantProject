@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Security.Claims;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
@@ -10,6 +11,7 @@ using MyRestaurantProject.Authorization;
 using MyRestaurantProject.Entities;
 using MyRestaurantProject.Exceptions;
 using MyRestaurantProject.Models;
+using MyRestaurantProject.Models.Enums;
 
 namespace MyRestaurantProject.Services
 {
@@ -47,6 +49,8 @@ namespace MyRestaurantProject.Services
         {
             var searchPhraseToLower = queryParams.SearchPhrase?.ToLower();
 
+            var isResultShouldBeOrder = queryParams.SortDirection.HasValue && (queryParams.SortBy != null && !string.IsNullOrWhiteSpace(queryParams.SortBy));
+
             var baseQuery = _dbContext
                 .Restaurants
                 .Include(x => x.Address)
@@ -54,6 +58,20 @@ namespace MyRestaurantProject.Services
                 .Where(r => searchPhraseToLower == null ||
                             (r.Name.ToLower().Contains(searchPhraseToLower)
                              || r.Description.ToLower().Contains(searchPhraseToLower)));
+
+            if (isResultShouldBeOrder)
+            {
+                var propertySelector = new Dictionary<string, Expression<Func<Restaurant, object>>>
+                {
+                    {nameof(Restaurant.Description), r => r.Description},
+                    {nameof(Restaurant.Address), r => r.Address},
+                    {nameof(Restaurant.Name), r => r.Name}
+                };
+
+                baseQuery = queryParams.SortDirection == SortDirection.ASC
+                    ? baseQuery.OrderBy(propertySelector[queryParams.SortBy])
+                    : baseQuery.OrderByDescending(propertySelector[queryParams.SortBy]);
+            }
             
             var restaurants = baseQuery
                 .Skip(queryParams.PageNumber * queryParams.PageSize)

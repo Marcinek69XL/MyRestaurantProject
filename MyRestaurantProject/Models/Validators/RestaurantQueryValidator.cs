@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using FluentValidation;
+using MyRestaurantProject.Entities;
 
 namespace MyRestaurantProject.Models.Validators
 {
@@ -8,7 +9,10 @@ namespace MyRestaurantProject.Models.Validators
         private readonly int[] allowedPageSizes = {
             5,10,15,20,25,50
         };
-
+        private readonly string[] allowedSortByColumnName = {
+            nameof(Restaurant.Description), nameof(Restaurant.Name), nameof(Restaurant.Address)
+        };
+        
         public RestaurantQueryValidator()
         {
             RuleFor(x => x.PageNumber)
@@ -21,6 +25,10 @@ namespace MyRestaurantProject.Models.Validators
                         context.AddFailure("PageSize",
                             $"Value must be 1 of : {string.Join(",", allowedPageSizes)}");
                 });
+
+            RuleFor(x => x.SortBy)
+                .Must(x => string.IsNullOrEmpty(x) || allowedSortByColumnName.Contains(x))
+                .WithMessage($"Value must be 1 of: {string.Join(",", allowedSortByColumnName)}");
         }
     }
 }
