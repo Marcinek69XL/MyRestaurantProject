@@ -1,14 +1,16 @@
 ﻿using System.IO;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
 
 namespace MyRestaurantProject.Controllers
 {
     [Route("file")]
-    [Authorize]
+    [AllowAnonymous]
     public class FileController : ControllerBase
     {
+        [HttpGet]
         public ActionResult GetFile([FromQuery] string fileName)
         {
             var basePath = Directory.GetCurrentDirectory();
@@ -24,6 +26,25 @@ namespace MyRestaurantProject.Controllers
 
             var file = System.IO.File.ReadAllBytes(filePath);
             return File(file, contentType, fileName);
+        }
+
+        [HttpPost]
+        public ActionResult Upload([FromForm] IFormFile file)
+        {
+            if (file is null || file.Length == 0)
+            {
+                return BadRequest();
+            }
+
+            var basePath = Directory.GetCurrentDirectory();
+            var newFileLocation = Path.Combine(basePath, "PrivateFiles", file.FileName);
+
+            using (var stream = new FileStream(newFileLocation, FileMode.Create))
+            {
+                file.CopyTo(stream);
+            }
+            
+            return Ok();
         }
     }
 }
