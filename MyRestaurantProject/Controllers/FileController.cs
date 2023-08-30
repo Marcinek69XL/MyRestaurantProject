@@ -11,6 +11,7 @@ namespace MyRestaurantProject.Controllers
     public class FileController : ControllerBase
     {
         [HttpGet]
+        [ResponseCache(Duration = 1200, VaryByQueryKeys = new[]{"fileName"})] //fileName to nazwa par. jak nizej
         public ActionResult GetFile([FromQuery] string fileName)
         {
             var basePath = Directory.GetCurrentDirectory();
