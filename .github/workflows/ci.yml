@@ -1,0 +1,23 @@
+on:
+  push:
+    branches:
+    - master
+  pull_request:
+    branches: 
+    - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2 #pobiera kod i checkouttuje na tego brancha
+    - name: Setup .NET Core SDK
+      uses: actions/setup-dotnet@v3.2.0
+      with:
+        dotnet-version: 6.0.x
+    - name: Restore rependencies
+      run: dotnet restore
+    - name: Build
+      run: dotnet build --no-restore
+    - name: Tests
+      run: dotnet test
